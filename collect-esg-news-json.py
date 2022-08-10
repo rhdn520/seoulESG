@@ -8,6 +8,19 @@ from kiwipiepy import Kiwi
 kiwi = Kiwi()
 
 kiwi.load_user_dictionary('user_dict.txt')
+with open(f'dictionary/gov-public-agent-list.csv', 'r', newline = '', encoding='utf-8-sig') as csvfile:
+    reader = csv.DictReader(csvfile)
+    for row in reader:
+        kiwi.add_user_word(row['name'])
+
+with open('dictionary/corporation-list.csv', 'r', newline='', encoding='utf-8-sig') as csvfile:
+    reader = csv.DictReader(csvfile)
+    for i, row in enumerate(reader):
+        if(row['name'].count(' ') > 0): #기업명에 띄어쓰기 포함된 경우 제외
+            continue
+        kiwi.add_user_word(row['name'])
+
+
 
 def trim_zerospace(w):
     newString = (w.encode('ascii', 'ignore')).decode("utf-8")
@@ -38,8 +51,8 @@ queryKeyword = [
 ]
 
 ##define today's date
-startDate = '2022-08-08'
-endDate = '2022-08-09'
+startDate = '2022-08-10'
+endDate = '2022-08-11'
 print(startDate)
 print(endDate)
 

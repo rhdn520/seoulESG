@@ -1,5 +1,7 @@
 import json
 import time
+from kiwipiepy import Kiwi
+kiwi = Kiwi()
 
 def jaccard_from_string_set(s1, s2):
     set1 = set(s1)
@@ -7,7 +9,8 @@ def jaccard_from_string_set(s1, s2):
     return (len(set1 & set2) / len(set1 | set2))
 
 start = time.time()
-filename = 'esg2022-08-08-2022-08-09'
+# filename = 'esg2022-08-10-2022-08-11'
+filename= '여성 임원'
 threadhold = 0.2
 newslist = []
 
@@ -86,12 +89,16 @@ while i < len(clusters):
         j = j + 1
     i = i + 1
 
-#sort cluster by idx
+#sort cluster by published date
 print(f"length: {len(clusters)}")
 for cluster in clusters:
     cluster.sort()
 
 clusters = sorted(clusters,key=lambda x:newslist[x[0]]['published_at'],reverse=False)
+
+
+
+
 
 #make txt file
 file = open(f'cluster/{filename}.txt', 'w+')
@@ -120,3 +127,36 @@ json.dump(json_cluster, json_file, indent=2, ensure_ascii=False)
 json_file.close()
 
 print(f"finished clustering in {time.time() - start}sec")
+
+
+
+# cluster_list = []
+# filename='포스코'
+# with open(f'cluster-json/{filename}.json', encoding='utf-8') as file:
+#     cluster_list = json.load(file)['news_cluster_list']
+#     print(len(cluster_list))
+
+# weight_list = []
+# for i, cluster in enumerate(cluster_list): 
+#     # print(cluster)
+#     #cluster 별로 키워드와의 연관도 계산 (키워드 포함 문장 개수)/(전체문장 개수)
+#     weight_of_cluster_news = []
+#     cluster_news_length = len(cluster)
+
+#     for news in cluster['news']:
+#         count = 0
+#         sents = kiwi.split_into_sents(news['content'])
+#         length = len(sents)
+#         for sent in sents:
+#             if(sent.text.upper().count(filename.upper()) > 0):
+#                 count = count + 1
+#         weight_of_cluster_news.append(count/length)
+    
+#     # print('count',count)
+#     weight_list.append({'index':i,'weight':sum(weight_of_cluster_news)/len(weight_of_cluster_news)})
+
+# weight_list = sorted(weight_list, key=lambda x:x['weight'], reverse=True)
+
+# for weight in weight_list:
+#     if(weight['weight']>0.1):
+#         print(cluster_list[weight['index']]['news'][0]['title'])
