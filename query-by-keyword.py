@@ -3,6 +3,8 @@ import json
 import re
 from kiwipiepy import Kiwi
 kiwi = Kiwi()
+from datetime import datetime
+from datetime import timedelta
 
 def clean_text(input):
     output = re.sub('[-=+,#/\?:^.@*\"※~ㆍ!』‘|\(\)\[\]`\'…》\”\“\’·]', ' ', input)
@@ -11,55 +13,25 @@ def clean_text(input):
 
 access_key = "511b5d13-222e-4bb9-8fa1-0ec4491d7166"
 
-querykeyword = '여성 임원'
-
-# word_cloud_payload = {
-#     "access_key": "511b5d13-222e-4bb9-8fa1-0ec4491d7166",
-#     "argument":{
-#         "query":querykeyword,
-#         "published_at":{
-#             "from" : "2022-05-01",
-#             "until": "2022-08-09"
-#         }
-#     }
-# }
-
-# payload2 = {
-#      "access_key": "511b5d13-222e-4bb9-8fa1-0ec4491d7166",
-#      "argument":{}
-# }
-
-# result2 = requests.post("http://tools.kinds.or.kr:8888/today_category_keyword", json=payload2)
-
-# print(result2.json()['return_object']['cate_keyword'])
-# for keyword in result2.json()['return_object']['cate_keyword']:
-#     print(keyword)
+querykeyword = input('검색할 단어를 입력하세요')
+period = int(input('최근 몇일간의 기사를 검색하시겠습니까?'))
+today = datetime.today()
+from_date = (datetime.today() - timedelta(days=period)).strftime('%Y-%m-%d')
+until_date = (datetime.today() + timedelta(days=1)).strftime('%Y-%m-%d')
 
 
-# result3 = requests.post("http://tools.kinds.or.kr:8888/word_cloud", json=word_cloud_payload)
-# keywords = sorted(result3.json()['return_object']['nodes'], key=lambda x:x['weight'], reverse=True)
-
-# queryList = []
-
-# count = 0
-# while(count < 11):
-#     name = keywords[count]['name']
-#     queryList.append(f'(\'{querykeyword}\' AND \'{name}\')')
-#     count = count + 1
-
-# print(" OR ".join(queryList))
-
+print(f'\'{querykeyword}\' 키워드로 지난 {period}일 간의 기사를 검색합니다')
 
 keywordPayload = {
     "access_key": "511b5d13-222e-4bb9-8fa1-0ec4491d7166",
     "argument": {
         "query":{
-            "title":querykeyword,
-            # "content": querykeyword
+            # "title":querykeyword,
+            "content": querykeyword
         }, 
         "published_at": {
-            "from": '2022-05-01',
-            "until": '2022-08-11'
+            "from": from_date,
+            "until": until_date
         },
         "provider": [
             "경향신문",
@@ -133,34 +105,75 @@ keywordPayload = {
             "content",
             "published_at",
             "provider",
-            "provider_news_id",
+            # "provider_news_id",
             "category",
             "category_incident",
             "byline",
-            "images",
+            # "images",
             "provider_link_page"
         ]
     }
 }
 
-keywordQueryResult = requests.post("http://tools.kinds.or.kr:8888/search/news",json=keywordPayload)
+server_response = requests.post("http://tools.kinds.or.kr:8888/search/news",json=keywordPayload)
 # print(keywordQueryResult.json())
-queryResult = keywordQueryResult.json()['return_object']['documents']
+queryResult = server_response.json()['return_object']['documents']
+print(f"queried {len(queryResult)} news!")
 
-
-newsList = []
-newsIdList = []
+#뉴스 기사 별로 토크나이즈
 for news in queryResult: 
-    if news['news_id'] in newsIdList:
-        continue
     token = kiwi.tokenize(clean_text(news['content']))
     morph = [item.form for item in token if item.tag == 'NNG' or item.tag == 'NNP' or item.tag =='NNB' or item.tag == 'NR' or item.tag == 'NP' or item.tag == 'SN']
     morph = set(morph)
     news['token_set'] = list(morph)
-    newsList.append(news)
-    newsIdList.append(news['news_id'])
 
-print(f"Queried {len(newsList)} News!!")
 
-with open(f'esg-news-list-json/{querykeyword}.json','w', encoding='UTF-8') as f:
-    json.dump(newsList, f, indent=2, ensure_ascii=False)
+# 뉴스 기사 날짜별로 묶기
+def find(list, key, value):
+    for i, dic in enumerate(list):
+        if dic[key] == value:
+            return i
+    return -1
+
+def cluster_by_date(queryResult):
+    date_cluster_list = []
+    for news in queryResult:
+        index = find(date_cluster_list, 'date', news['published_at'][0:10])
+        print(index)
+        if(index >= 0):
+            date_cluster_list[index]['news_list'].append(news)
+            date_cluster_list[index]['count'] = date_cluster_list[index]['count'] + 1
+        else:
+            new_date_cluster = {
+                'date': news['dateline'][0:10],
+                'count': 1,
+                'news_list':[
+                    news
+                ]
+            }
+            date_cluster_list.append(new_date_cluster)
+    
+    return date_cluster_list
+
+a = cluster_by_date(queryResult= queryResult)
+for cluster in a:
+    print(cluster)
+    print('\n')
+
+
+# newsList = []
+# newsIdList = []
+# for news in queryResult: 
+#     if news['news_id'] in newsIdList:
+#         continue
+#     token = kiwi.tokenize(clean_text(news['content']))
+#     morph = [item.form for item in token if item.tag == 'NNG' or item.tag == 'NNP' or item.tag =='NNB' or item.tag == 'NR' or item.tag == 'NP' or item.tag == 'SN']
+#     morph = set(morph)
+#     news['token_set'] = list(morph)
+#     newsList.append(news)
+#     newsIdList.append(news['news_id'])
+
+# print(f"Queried {len(newsList)} News!!")
+
+# with open(f'esg-news-list-json/{querykeyword}.json','w', encoding='UTF-8') as f:
+#     json.dump(newsList, f, indent=2, ensure_ascii=False)

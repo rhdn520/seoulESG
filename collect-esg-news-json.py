@@ -51,8 +51,8 @@ queryKeyword = [
 ]
 
 ##define today's date
-startDate = '2022-08-10'
-endDate = '2022-08-11'
+startDate = '2022-08-11'
+endDate = '2022-08-12'
 print(startDate)
 print(endDate)
 
@@ -163,9 +163,6 @@ for news in keywordQueryResult.json()['return_object']['documents']:
     if news['news_id'] in newsIdList:
         continue
     token = kiwi.tokenize(clean_text(news['content']))
-    for item in token:
-        if(item.tag == 'NNP'):
-            print(item.form)
     morph = [item.form for item in token if item.tag == 'NNG' or item.tag == 'NNP' or item.tag =='NNB' or item.tag == 'NR' or item.tag == 'NP' or item.tag == 'SN']
     morph = set(morph)
     news['token_set'] = list(morph)
