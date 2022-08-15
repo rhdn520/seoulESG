@@ -1,3 +1,4 @@
+from calendar import c
 import requests
 import json
 import re
@@ -139,7 +140,6 @@ def cluster_by_date(queryResult):
     date_cluster_list = []
     for news in queryResult:
         index = find(date_cluster_list, 'date', news['published_at'][0:10])
-        print(index)
         if(index >= 0):
             date_cluster_list[index]['news_list'].append(news)
             date_cluster_list[index]['count'] = date_cluster_list[index]['count'] + 1
@@ -155,10 +155,89 @@ def cluster_by_date(queryResult):
     
     return date_cluster_list
 
-a = cluster_by_date(queryResult= queryResult)
-for cluster in a:
-    print(cluster)
-    print('\n')
+news_clusters_by_date = cluster_by_date(queryResult= queryResult)
+
+#날짜별로 묶인 뉴스기사들 다시 주제별로 클러스터링하기(자카드)
+
+threadhold = 0.2
+
+def jaccard_from_string_set(s1, s2):
+    set1 = set(s1)
+    set2 = set(s2)
+    return (len(set1 & set2) / len(set1 | set2))
+
+
+for cluster_by_date in news_clusters_by_date:
+    jaccard_calculate = []
+    for index,news in enumerate(cluster_by_date['news_list']):
+        clustertmp = [index]
+        jndex = index + 1
+        while jndex < len(cluster_by_date['news_list']):
+            if (jaccard_from_string_set(cluster_by_date['news_list'][index]['token_set'], cluster_by_date['news_list'][jndex]['token_set']) > threadhold):
+                clustertmp.append(jndex)
+            jndex = jndex + 1
+        jaccard_calculate.append(clustertmp)
+    
+    clusters = []
+    ignoreIdx = []
+    count = 0
+
+    while count < len(jaccard_calculate):
+        if count in ignoreIdx:
+            count = count + 1
+            continue
+
+        for index in jaccard_calculate[count]:
+            if(len(set(jaccard_calculate[index]) - set(jaccard_calculate[count])) != 0):
+                jaccard_calculate[count] = jaccard_calculate[count] + list(set(jaccard_calculate[index]) - set(jaccard_calculate[count]))
+        
+        clusters.append(jaccard_calculate[count])
+        ignoreIdx = ignoreIdx + jaccard_calculate[count]
+        count = count + 1
+
+    i = 0
+    while i < len(clusters):
+        j = i + 1
+        while j < len(clusters):
+            if(len(set(clusters[i]) & set(clusters[j])) > 0):
+                duplicateItems = list(set(clusters[i]) & set(clusters[j]))
+                
+                #make cluster without duplicate items
+                clusterI = list(set(clusters[i]) - (set(clusters[i]) & set(clusters[j])))
+                clusterJ = list(set(clusters[i]) - (set(clusters[i]) & set(clusters[j])))
+
+                clusterIToken = []
+                for idx in clusterI:
+                    clusterIToken = clusterIToken + cluster_by_date['news_list'][idx]['token_set']
+                clusterITokenSet = set(clusterIToken)
+
+                clusterJToken = []
+                for idx in clusterJ:
+                    clusterJToken = clusterJToken + cluster_by_date['news_list'][idx]['token_set']
+                clusterJTokenSet = set(clusterJToken)
+
+                for item in duplicateItems:
+                    jaccardI = len(clusterITokenSet & set(cluster_by_date['news_list'][item]['token_set'])) / len(clusterITokenSet | set(cluster_by_date['news_list'][item]['token_set']))
+                    jaccardJ = len(clusterJTokenSet & set(cluster_by_date['news_list'][item]['token_set'])) / len(clusterJTokenSet | set(cluster_by_date['news_list'][item]['token_set']))
+                    if jaccardI > jaccardJ:
+                        clusters[j] = list(set(clusters[j])-set([item]))
+                    else:
+                        clusters[i] = list(set(clusters[i])-set([item]))
+                
+                i=0
+                j=0
+            j = j + 1
+        i = i + 1
+    
+    cluster_by_date['cluster_by_jaccard'] = []
+    for cluster in clusters:
+        tmp = []
+        for index in cluster:
+            tmp.append(cluster_by_date['news_list'][index])
+        cluster_by_date['cluster_by_jaccard'].append(tmp)
+
+print(news_clusters_by_date[0]['cluster_by_jaccard'])
+
 
 
 # newsList = []
@@ -177,3 +256,16 @@ for cluster in a:
 
 # with open(f'esg-news-list-json/{querykeyword}.json','w', encoding='UTF-8') as f:
 #     json.dump(newsList, f, indent=2, ensure_ascii=False)
+
+file = open(f'cluster/{querykeyword}.txt', 'w+')
+for cluster in news_clusters_by_date:
+    file.write(cluster['date'] + '\n')
+    for news_list in cluster['cluster_by_jaccard']:
+        for index, news in enumerate(news_list):
+            if(index == len(news_list) - 1):
+                file.write('\t' + news['title'] + ' | ' + news['provider_link_page'] + '\n' + '\n')
+            else:
+                file.write('\t' + news['title'] + ' | ' + news['provider_link_page'] + '\n')
+
+file.close()
+            
