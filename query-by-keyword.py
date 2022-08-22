@@ -263,9 +263,9 @@ for cluster in news_clusters_by_date:
     for news_list in cluster['cluster_by_jaccard']:
         for index, news in enumerate(news_list):
             if(index == len(news_list) - 1):
-                file.write('\t' + news['title'] + ' | ' + news['provider_link_page'] + '\n' + '\n')
+                file.write('\t' + news['title'] + ' | ' + ','.join(news['category']) + ' | ' + news['provider_link_page'] + '\n' + '\n')
             else:
-                file.write('\t' + news['title'] + ' | ' + news['provider_link_page'] + '\n')
+                file.write('\t' + news['title'] + ' | ' + ','.join(news['category']) + ' | ' + news['provider_link_page'] + '\n')
 
 file.close()
             

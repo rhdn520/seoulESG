@@ -47,12 +47,13 @@ queryKeyword = [
     '동반성장위원회',
     'K-ESG',
     '사회공헌',
-    '지배구조'
+    '지배구조',
+    '탄소중립'
 ]
 
 ##define today's date
-startDate = '2022-08-11'
-endDate = '2022-08-12'
+startDate = '2022-08-22'
+endDate = '2022-08-23'
 print(startDate)
 print(endDate)
 
