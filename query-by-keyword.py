@@ -90,6 +90,7 @@ keywordPayload = {
             "OBS"
         ],
         "category": [
+            '경제'
         ],
         "category_incident": [
             # // "범죄",

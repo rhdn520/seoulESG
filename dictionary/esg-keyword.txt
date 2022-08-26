@@ -1,0 +1,234 @@
+GPG Protocol
+GRI
+ISO 26000
+SASB
+지속가능성 회계기준위원회
+이해관계자
+AccountAbility
+AA1000
+CDSB
+기후정보공개표준위원회
+CDP
+탄소정보공개프로젝트
+CERES
+세레스
+클라이밋그룹
+Climate Group
+국제배출권거래 협회
+비재무정보 공시
+CRD
+Corporate Reporting Dialogue
+IIRC
+SBTi
+TCFD
+UNGC
+SDGs
+Climate Action 100+
+CA100+
+GSIA
+글로벌지속가능투자연합
+GSIR
+ICGN
+국제기업지배구조네트워크
+PDC
+포트폴리오 탈탄소화 연합
+UNEP
+온실가스 배출량
+감축목표
+FTSE Russell
+MSCI
+기후변화
+탄소배출
+기후변화 취약성
+자연자본
+사회자본
+인적자본
+생물다양성
+물 스트레스
+오염
+폐기물
+환경 기회
+청정기술 기회
+재생에너지
+거버넌스
+반부패
+기업지배구조
+취약계층
+RepRisk
+DJSI
+Sustainalytics
+ESG 평가
+ESG 리스크
+Vigeo Eiris
+인권
+지역사회 참여
+Capitals Coalition
+WBCSD
+Glass Lewis
+IMP
+사회성과연계채권
+SIB
+거버넌스 평가
+UNRISD
+유엔사회개발연구소
+World Benchmarking Alliance
+SDG2000
+UNCED
+ESG 정보공개 표준화
+기후법
+지속가능금융
+탄소국경세
+EU Taxonomy
+SFDR
+TCFD
+기후금융
+플라스틱 규제
+생물다양성
+스튜어드십
+주주 행동주의
+공급망 책임
+인권 보고 의무화
+글로벌 보고 이니셔티브
+지속가능성 회계기준위원회
+국제통합보고위원회
+기후정보공개표준위원회
+탄소정보 공개프로젝트
+Value Reporting Foundation
+이해관계자 자본주의 지표
+SCM
+SSB
+배출권거래제
+토지 이용 및 산림 규정
+재생에너지
+Fit for 55
+녹색채권
+저탄소 벤치마크
+기후변화 리스크 완화
+기후변화 리스크 적응
+수자원 보호
+해양생태계 보호
+자원순환 경제
+오염물질 방지 및 관리
+생물다양성 
+생태계 복원
+지속가능금융공시제도
+비재무정보 공개지침
+친환경 소재 개발
+성별 다양성
+인종 다양성
+이사회 다양성
+유엔 책임투자원칙
+UN PRI
+WWF
+세계자연기금
+지속가능경영보고서
+지속가능경영
+온실가스 배출
+에너지 사용
+물 사용
+폐기물 배출
+법규 위반
+공정경쟁
+안전
+보건
+임직원
+ESG 위험
+ESG 기회
+이해관계자 참여
+사회적 채권
+지속가능채권
+온실가스 배출권거래제
+배출권 리스크
+RE100
+저탄소 산업
+탄소중립
+녹색금융
+탈석탄
+K택소노미
+택소노미
+Taxonomy
+기후변화 완화
+기후변화 적응
+천연자원 보전
+생물다양성 보전
+오염 방지 및 관리
+순환자원
+유리천장
+여성 임원 할당제
+스튜어드십 코드
+Stewardship Code
+그리드 패리티
+그린 스완
+그린워싱
+위장환경주의
+기후중립
+사회성과 연계채권
+설리번 원칙
+순환경제
+이해관계자 자본주의
+포용적 자본주의
+임팩트 투자
+사회책임투자
+SRI
+Socially Responsible Investing
+지속가능투자
+NFRD
+전 과정 평가
+LCA
+Life Cycle Assessment
+지속가능성
+책임투자
+탄소가격제
+탄소국경세
+탄소국경조정세
+탄소누출
+탄소발자국
+탄소세
+탈탄소화
+BAU
+온실가스 배출 전망치
+CCUS
+CCS
+CCU
+ESG 채권
+PCR
+Post-Consumer Recycled
+국가온실가스 감축목표
+NDC
+국제기후 채권기구
+국제항공탄소 상쇄감축제도
+그린 뉴딜
+글로벌탄소 프로젝트
+GCP
+IPCC
+기후변화에 관한 정부간 협의체
+녹색금융협의체
+녹색분류체계
+Geen Taxonomy
+신재생에너지 공급 의무화 제도
+RPS 제도
+에코바디스
+EcoVadis
+유럽 그린 딜
+유럽 기후법
+유엔기후변화협약
+UNFCCC
+유럽청정수소연합
+유엔기후변화협약 당사국총회
+파리기후변화협약
+교토의정서
+유엔지속가능발전목표
+UN SDGs
+적도 원칙
+지속가능성 기준위원회
+Sustainability Standards Board
+탄소회계금융협의체
+넷제로
+Net Zero
+지배구조원칙
+P4G
+RBA
+SSE Initiative
+The Investor Agenda
+VBA
+ZWTL

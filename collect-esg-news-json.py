@@ -35,25 +35,16 @@ def clean_text(input):
     return output
 
 ##query keywords
-queryKeyword = [
-    '지속가능경영',
-    '지속가능경영보고서',
-    'ESG',
-    'ESG 경영',
-    'SBTi',
-    'RE100',
-    'CSR',
-    '상생협력기금',
-    '동반성장위원회',
-    'K-ESG',
-    '사회공헌',
-    '지배구조',
-    '탄소중립'
-]
+queryKeyword = []
+with open('dictionary/esg-keyword.txt','r',encoding='utf-8') as txtfile:
+    lines = txtfile.readlines()
+    for line in lines:
+        queryKeyword.append(line.replace('\n',''))
+
 
 ##define today's date
-startDate = '2022-08-22'
-endDate = '2022-08-23'
+startDate = '2022-08-25'
+endDate = '2022-08-26'
 print(startDate)
 print(endDate)
 
@@ -124,6 +115,7 @@ keywordPayload = {
             "OBS"
         ],
         "category": [
+            '경제'
         ],
         "category_incident": [
             # // "범죄",
