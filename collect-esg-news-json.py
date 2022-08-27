@@ -43,8 +43,8 @@ with open('dictionary/esg-keyword.txt','r',encoding='utf-8') as txtfile:
 
 
 ##define today's date
-startDate = '2022-08-25'
-endDate = '2022-08-26'
+startDate = '2022-08-26'
+endDate = '2022-08-27'
 print(startDate)
 print(endDate)
 

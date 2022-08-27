@@ -1,4 +1,5 @@
 from calendar import c
+from collections import Counter
 import requests
 import json
 import re
@@ -11,6 +12,12 @@ def clean_text(input):
     output = re.sub('[-=+,#/\?:^.@*\"※~ㆍ!』‘|\(\)\[\]`\'…》\”\“\’·]', ' ', input)
     return output
 
+def jaccard_from_string_set(s1, s2):
+    set1 = set(s1)
+    set2 = set(s2)
+    return (len(set1 & set2) / len(set1 | set2))
+
+
 
 access_key = "511b5d13-222e-4bb9-8fa1-0ec4491d7166"
 
@@ -19,6 +26,7 @@ period = int(input('최근 몇일간의 기사를 검색하시겠습니까?'))
 today = datetime.today()
 from_date = (datetime.today() - timedelta(days=period)).strftime('%Y-%m-%d')
 until_date = (datetime.today() + timedelta(days=1)).strftime('%Y-%m-%d')
+
 
 
 print(f'\'{querykeyword}\' 키워드로 지난 {period}일 간의 기사를 검색합니다')
@@ -122,12 +130,33 @@ server_response = requests.post("http://tools.kinds.or.kr:8888/search/news",json
 queryResult = server_response.json()['return_object']['documents']
 print(f"queried {len(queryResult)} news!")
 
+query_keyword_token = kiwi.tokenize(clean_text(querykeyword))
+keyword_morph = [item.form for item in query_keyword_token if item.tag == 'NNG' or item.tag == 'NNP' or item.tag =='NNB' or item.tag == 'NR' or item.tag == 'NP' or item.tag == 'SN']
+keyword_token_list = list(set(keyword_morph))
+
+def count_token_occurrence(keyword_morph, content_morph):
+    count = 0
+    content_counter = Counter(content_morph)
+    for morph in keyword_morph:
+        if(content_counter.get(morph) == None):
+            continue
+        count = count + content_counter.get(morph)
+    return count/len(content_morph)
+
 #뉴스 기사 별로 토크나이즈
+news_to_remove_list = []
 for news in queryResult: 
     token = kiwi.tokenize(clean_text(news['content']))
     morph = [item.form for item in token if item.tag == 'NNG' or item.tag == 'NNP' or item.tag =='NNB' or item.tag == 'NR' or item.tag == 'NP' or item.tag == 'SN']
-    morph = set(morph)
-    news['token_set'] = list(morph)
+    news['token_set'] = list(set(morph))
+    title_jaccard = jaccard_from_string_set(keyword_token_list, news['token_set'])
+    token_occurrence = count_token_occurrence(keyword_morph, morph)
+    if((token_occurrence * 2) + (title_jaccard * 3) < 0.055):
+        news_to_remove_list.append(news)
+
+for news_to_remove in news_to_remove_list:
+    print(news_to_remove['title'])
+    queryResult.remove(news_to_remove)
 
 
 # 뉴스 기사 날짜별로 묶기
@@ -158,16 +187,11 @@ def cluster_by_date(queryResult):
 
 news_clusters_by_date = cluster_by_date(queryResult= queryResult)
 
+
+
 #날짜별로 묶인 뉴스기사들 다시 주제별로 클러스터링하기(자카드)
 
 threadhold = 0.2
-
-def jaccard_from_string_set(s1, s2):
-    set1 = set(s1)
-    set2 = set(s2)
-    return (len(set1 & set2) / len(set1 | set2))
-
-
 for cluster_by_date in news_clusters_by_date:
     jaccard_calculate = []
     for index,news in enumerate(cluster_by_date['news_list']):
@@ -255,8 +279,8 @@ print(news_clusters_by_date[0]['cluster_by_jaccard'])
 
 # print(f"Queried {len(newsList)} News!!")
 
-# with open(f'esg-news-list-json/{querykeyword}.json','w', encoding='UTF-8') as f:
-#     json.dump(newsList, f, indent=2, ensure_ascii=False)
+with open(f'esg-news-list-json/{querykeyword}.json','w', encoding='UTF-8') as f:
+    json.dump(news_clusters_by_date, f, indent=2, ensure_ascii=False)
 
 file = open(f'cluster/{querykeyword}.txt', 'w+')
 for cluster in news_clusters_by_date:
