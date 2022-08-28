@@ -143,7 +143,7 @@ def count_token_occurrence(keyword_morph, content_morph):
         count = count + content_counter.get(morph)
     return count/len(content_morph)
 
-#뉴스 기사 별로 토크나이즈
+#뉴스 기사 별로 토크나이즈 && 주제와 연관성이 떨어지는 경우 탈락
 news_to_remove_list = []
 for news in queryResult: 
     token = kiwi.tokenize(clean_text(news['content']))
@@ -169,7 +169,7 @@ def find(list, key, value):
 def cluster_by_date(queryResult):
     date_cluster_list = []
     for news in queryResult:
-        index = find(date_cluster_list, 'date', news['published_at'][0:10])
+        index = find(date_cluster_list, 'date', news['dateline'][0:10])
         if(index >= 0):
             date_cluster_list[index]['news_list'].append(news)
             date_cluster_list[index]['count'] = date_cluster_list[index]['count'] + 1
@@ -188,6 +188,7 @@ def cluster_by_date(queryResult):
 news_clusters_by_date = cluster_by_date(queryResult= queryResult)
 
 
+news_clusters_by_date = sorted(news_clusters_by_date, key=lambda x: x['date'])
 
 #날짜별로 묶인 뉴스기사들 다시 주제별로 클러스터링하기(자카드)
 
