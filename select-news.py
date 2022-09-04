@@ -19,13 +19,13 @@ def jaccard_from_string_set(s1, s2):
 
 cluster_by_date_list = []
 
-with open('esg-news-list-json/생분해성 플라스틱.json', encoding='utf-8') as file:
+with open('esg-news-list-json/폐배터리 재활용.json', encoding='utf-8') as file:
     cluster_by_date_list = json.load(file)
 
 question = [
     inquirer.List('standard',
     message="기준이 될 뉴스를 고르세요",
-    choices = [news['title'] for news in cluster_by_date_list[-3]['news_list']]
+    choices = [news['title'] for news in cluster_by_date_list[-1]['news_list']]
     )
 ]
 
