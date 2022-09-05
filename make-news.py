@@ -225,6 +225,7 @@ def cluster_news(news_list):
                 date_cluster_list[index]['count'] = date_cluster_list[index]['count'] + 1
             else:
                 news_date_cluster = {
+                    'cluster_title':news_list[news_index]['title'],
                     'date': news_list[news_index]['dateline'][0:10],
                     'count':1,
                     'news_list':[

@@ -19,7 +19,7 @@ def jaccard_from_string_set(s1, s2):
 
 cluster_by_date_list = []
 
-with open('esg-news-list-json/폐배터리 재활용.json', encoding='utf-8') as file:
+with open('esg-news-list-json/LG유플러스 탄소중립.json', encoding='utf-8') as file:
     cluster_by_date_list = json.load(file)
 
 question = [
@@ -61,7 +61,7 @@ for date_cluster in cluster_by_date_list:
             news_morph = [item.form for item in news_tokens if item.tag == 'NNG']
             cluster_tokens_list = cluster_tokens_list + list(set(news_morph))
         cluster_tokens_list = list(set(cluster_tokens_list))
-        if(jaccard_from_string_set(cluster_tokens_list, standard_token_list) > 0.13):
+        if(jaccard_from_string_set(cluster_tokens_list, standard_token_list) > 0.12):
             selected_news_list.append(jaccard_cluster[0])
 
 for news in selected_news_list:
