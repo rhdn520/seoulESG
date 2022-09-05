@@ -63,6 +63,7 @@ for date_cluster in cluster_by_date_list:
         cluster_tokens_list = list(set(cluster_tokens_list))
         if(jaccard_from_string_set(cluster_tokens_list, standard_token_list) > 0.12):
             selected_news_list.append(jaccard_cluster[0])
+    
 
 for news in selected_news_list:
     print(news['title'] + ' | ' + news['provider_link_page'])

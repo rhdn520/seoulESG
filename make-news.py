@@ -7,9 +7,21 @@ import json
 import re
 from kiwipiepy import Kiwi
 kiwi = Kiwi()
+kiwi.load_user_dictionary('user_dict.txt')
+with open(f'dictionary/gov-public-agent-list.csv', 'r', newline = '', encoding='utf-8-sig') as csvfile:
+    reader = csv.DictReader(csvfile)
+    for row in reader:
+        kiwi.add_user_word(row['name'])
+with open('dictionary/corporation-list.csv', 'r', newline='', encoding='utf-8-sig') as csvfile:
+    reader = csv.DictReader(csvfile)
+    for i, row in enumerate(reader):
+        if(row['name'].count(' ') > 0): #기업명에 띄어쓰기 포함된 경우 제외
+            continue
+        kiwi.add_user_word(row['name'])
 from datetime import datetime
 from datetime import timedelta
 from collections import Counter
+import inquirer
 
 def clean_text(dirty_text):
     cleaned_text = re.sub('[-=+,#/\?:^.@*\"※~ㆍ!』‘|\(\)\[\]`\'…》\”\“\’·]', ' ', dirty_text)
@@ -218,7 +230,6 @@ def cluster_news(news_list):
     for cluster in clusters:
         date_cluster_list = []
         for news_index in cluster:
-            print(news_list[news_index])
             index = find(date_cluster_list, 'date', news_list[news_index]['dateline'][0:10])
             if(index >= 0):
                 date_cluster_list[index]['news_list'].append(news_list[news_index])
@@ -241,11 +252,64 @@ def cluster_news(news_list):
 
     return cluster_list
 
+def select_news(cluster_list, threadhold = 0.12, NNP = False):
+    question = [
+        inquirer.List(
+            'standard',
+            message = "기준이 될 클러스터를 고르세요",
+            choices= [cluster['cluster_title'] for cluster in cluster_list[-10:]]
+        )
+    ]
+    answer = inquirer.prompt(question)
+    print(answer['standard'])
+    standardIndex = find(cluster_list, 'cluster_title', answer['standard'])
+    standard_tokens = []
+    for news in cluster_list[standardIndex]['news_list']:
+        news_tokens = kiwi.tokenize(clean_text(news['content']))
+        news_morph = [item.form for item in news_tokens if item.tag == 'NNG']
+        if NNP == True:
+            news_morph = [item.form for item in news_tokens if item.tag == 'NNG' or item.tag == 'NNP']
 
-request_result = search_news('폐배터리 재활용')
-filtered_result = filter_news('폐배터리 재활용', request_result)
-print(len(request_result))
-print(len(filter_news('폐배터리 재활용', request_result)))
+        standard_tokens = standard_tokens + list(set(news_morph))
+    standard_tokens = list(set(standard_tokens))
 
-with open(f'esg-news-list-json/testtest.json', 'w', encoding='utf-8') as f:
-    json.dump(cluster_news(filtered_result), f, indent=2, ensure_ascii=False)
+    insight_indices = []
+    for index,cluster in enumerate(cluster_list):
+        # if(index == standardIndex):
+        #     continue
+        cluster_tokens = []
+        for news in cluster['news_list']:
+            news_tokens = kiwi.tokenize(clean_text(news['content']))
+            news_morph = [item.form for item in news_tokens if item.tag == 'NNG']
+            if NNP == True:
+                news_morph = [item.form for item in news_tokens if item.tag == 'NNG' or item.tag == 'NNP']
+
+            cluster_tokens = cluster_tokens + list(set(news_morph))
+        cluster_tokens = list(set(cluster_tokens))
+
+        if(jaccard_from_list(standard_tokens, cluster_tokens) > threadhold):
+            insight_indices.append(index)
+    
+    selected_cluster = []
+    for index in insight_indices:
+        selected_cluster.append(cluster_list[index])
+
+    return selected_cluster 
+
+
+search_keyword = '롯데 사회공헌'
+date_period = 120
+NNP_on = True
+
+request_result = search_news(search_keyword, 120)
+filtered_result = filter_news(search_keyword, request_result)
+cluster_list = cluster_news(filtered_result)
+selected_clusters = select_news(cluster_list, 0.11, NNP_on)
+for cluster in selected_clusters:
+    date = cluster['news_list'][0]['dateline'][0:10]
+    title =  cluster['news_list'][0]['title']
+    link = cluster['news_list'][0]['provider_link_page']
+    print(f'{date} | {title} | {link}')
+
+
+
