@@ -288,23 +288,31 @@ def select_news(cluster_list, threadhold = 0.12, NNP = False):
         cluster_tokens = list(set(cluster_tokens))
 
         if(jaccard_from_list(standard_tokens, cluster_tokens) > threadhold):
-            insight_indices.append(index)
-    
+            index_obj = {
+                'index': index,
+                'jaccard': jaccard_from_list(standard_tokens, cluster_tokens)
+            }
+            insight_indices.append(index_obj)
+
+    insight_indices = sorted(insight_indices, key=lambda x:x['jaccard'], reverse=True)
+
     selected_cluster = []
     for index in insight_indices:
-        selected_cluster.append(cluster_list[index])
+        selected_cluster.append(cluster_list[index['index']])
 
     return selected_cluster 
 
 
-search_keyword = '롯데 사회공헌'
+search_keyword = 'SK그룹 수소 산업'
 date_period = 120
+select_threadhold = 0.12
 NNP_on = True
 
 request_result = search_news(search_keyword, 120)
 filtered_result = filter_news(search_keyword, request_result)
 cluster_list = cluster_news(filtered_result)
-selected_clusters = select_news(cluster_list, 0.11, NNP_on)
+selected_clusters = select_news(cluster_list, select_threadhold, NNP_on)
+
 for cluster in selected_clusters:
     date = cluster['news_list'][0]['dateline'][0:10]
     title =  cluster['news_list'][0]['title']
