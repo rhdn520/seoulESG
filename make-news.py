@@ -156,7 +156,7 @@ def filter_news(keyword, newsList):
         #calculate jaccard coefficient with title & keyword
         title_jaccard = jaccard_from_list(keyword_token_list, news['token_list'])
 
-        if((token_occurrence * 2) + (title_jaccard * 3) > 0.055):
+        if((token_occurrence * 2) + (title_jaccard * 3) > 0.05):
             filtered_news_list.append(news)
     
     return filtered_news_list
@@ -303,15 +303,32 @@ def select_news(cluster_list, threadhold = 0.12, NNP = False):
     return selected_cluster 
 
 
-search_keyword = 'SK그룹 수소 산업'
+search_keyword = 'SK케미칼 화학적 재활용'
 date_period = 120
 select_threadhold = 0.12
 NNP_on = True
 
 request_result = search_news(search_keyword, 120)
+print(len(request_result))
 filtered_result = filter_news(search_keyword, request_result)
 cluster_list = cluster_news(filtered_result)
+if (len(cluster_list) < 4):
+    print('뉴스의 개수가 너무 적습니다')
+    exit()
+
 selected_clusters = select_news(cluster_list, select_threadhold, NNP_on)
+
+# question = [
+#     inquirer.Checkbox('material',
+#     "글감이 될 뉴스를 선택하세요",
+#     [cluster['cluster_title'] for cluster in selected_clusters])
+# ]
+
+# materials = inquirer.prompt(question)['material']
+
+# for material in materials:
+#     print(material)
+#     print(selected_clusters[find(selected_clusters, 'cluster_title', material)]['news_list'][0]['content'])
 
 for cluster in selected_clusters:
     date = cluster['news_list'][0]['dateline'][0:10]
