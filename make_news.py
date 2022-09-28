@@ -22,6 +22,7 @@ from datetime import datetime
 from datetime import timedelta
 from collections import Counter
 import inquirer
+from make_news_sum import summarize_test
 
 def clean_text(dirty_text):
     cleaned_text = re.sub('[-=+,#/\?:^.@*\"※~ㆍ!』‘|\(\)\[\]`\'…》\”\“\’·]', ' ', dirty_text)
@@ -303,10 +304,10 @@ def select_news(cluster_list, threadhold = 0.12, NNP = False):
     return selected_cluster 
 
 
-search_keyword = 'SK케미칼 화학적 재활용'
-date_period = 120
+search_keyword = '유기태양전지'
+date_period = 150
 select_threadhold = 0.12
-NNP_on = True
+NNP_on = False
 
 request_result = search_news(search_keyword, 120)
 print(len(request_result))
@@ -329,6 +330,7 @@ selected_clusters = select_news(cluster_list, select_threadhold, NNP_on)
 # for material in materials:
 #     print(material)
 #     print(selected_clusters[find(selected_clusters, 'cluster_title', material)]['news_list'][0]['content'])
+    
 
 for cluster in selected_clusters:
     date = cluster['news_list'][0]['dateline'][0:10]

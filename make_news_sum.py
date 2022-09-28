@@ -1,9 +1,12 @@
+# import os
+# os.environ['KMP_DUPLICATE_LIB_OK']='True'
+
 import math
 import pandas as pd
 import numpy as np
 
-# from kiwipiepy import Kiwi
-# kiwi = Kiwi()
+from kiwipiepy import Kiwi
+kiwi = Kiwi()
 import kss
 
 from tqdm.auto import tqdm
@@ -38,14 +41,14 @@ import csv
 import datetime
 import json
 import re
-from kiwipiepy import Kiwi
-kiwi = Kiwi()
+# from kiwipiepy import Kiwi
+# kiwi = Kiwi()
 # kiwi.load_user_dictionary('user_dict.txt')
-with open(f'drive/MyDrive/bertsummary/dictionary/gov-public-agent-list.csv', 'r', newline = '', encoding='utf-8-sig') as csvfile:
+with open(f'dictionary/gov-public-agent-list.csv', 'r', newline = '', encoding='utf-8-sig') as csvfile:
     reader = csv.DictReader(csvfile)
     for row in reader:
         kiwi.add_user_word(row['name'])
-with open('drive/MyDrive/bertsummary/dictionary/corporation-list.csv', 'r', newline='', encoding='utf-8-sig') as csvfile:
+with open('dictionary/corporation-list.csv', 'r', newline='', encoding='utf-8-sig') as csvfile:
     reader = csv.DictReader(csvfile)
     for i, row in enumerate(reader):
         if(row['name'].count(' ') > 0): #기업명에 띄어쓰기 포함된 경우 제외
@@ -621,15 +624,26 @@ def summarize_test(text):
     return summ
 
 test_context = '''
-태국이 내년부터 폐플라스틱 수입량을 단계적으로 제한하고 2025년에는 수입을 전면 금지한다. 와라웃 신빠-아차 태국 천연자원환경부 장관이 정부가 향후 3년간 단계적으로 플라스틱 스크랩 수입 금지 조치를 시행할 예정이라고 밝혔다고 방콕포스트가 19일 보도했다. 플라스틱 스크랩은 재활용에 사용되는 플라스틱 쓰레기다.
+한국과학기술연구원(KIST) 차세대태양전지연구센터 손해정 박사팀이 유기태양전지를 넓은 면적으로 만들어도 성능이 유지되는 기술을 개발했다. 연구진은 빛을 받아 전기가 만들어지는 광활성층을 세 종류의 유기반도체 소재로 제작했다. 58.5㎠로 만든 대면적 유기태양전지 모듈은 세계 최고 수준인 14.04%의 광전 변환효율을 달성했다.
 
- 와라웃 장관은 “2020년부터 수입 금지가 논의됐으며, 이제 이를 실행할 시점”이라며 “태국이 플라스틱 쓰레기 폐기장이 돼서는 안 된다”고 밝혔다. 아울러 “우리는 나라를 보호해야 한다. 수입 금지는 플라스틱 쓰레기로부터 나라를 깨끗하게 하는 중요한 걸음”이라고 덧붙였다.
+손해정 박사는 27일 "인쇄 공정으로 만든 유기 태양전지를 대규모 모듈화 할 때 성능이 감소되는 주요요인을 밝혀 상용화에 한걸음 더 가까워졌다"고 말했다.
 
-내년에 시작하는 1단계 제한 조치는 자유무역지구 내 14개 수입 업체의 생산 능력을 기준으로 폐플라스틱 수입량을 규제한다. 2024년에는 수입이 50%만 허용되며, 2025년에는 전면 금지된다. 자유무역 지구 외부에 있는 공장은 폐플라스틱 수입 시 당국의 승인을 받아야 한다.
+유기태양전지는 건물 벽면이나 옥상의 외장재, 창문 등에 프린팅 하는 방법으로 제작이 가능해 도심형 태양광 발전의 핵심기술로 주목 받고 있다. 하지만 지금까지의 고효율 유기태양전지들은 실험실 수준에서 개발된 0.1㎠ 미만의 좁은 면적이다. 넓은 면적의 모듈을 제작할 때 발생하는 성능감소와 재현성 문제로 상용화에 어려움을 겪고 있다.
 
-태국 정부는 또한 2023~2027년 플라스틱 폐기물 관리 계획도 수립 중이다. 전국 백화점과 편의점에서 일회용 비닐봉지 사용을 줄이는 캠페인도 진행한다. 태국 가정에서 나오는 쓰레기는 연간 2498만t으로, 이중 32%만이 적절하게 관리된다고 와라웃 장관은 설명했다.
+연구진은 유기태양전지 내 광활성층의 형태에 주목했다. 광활성층은 일반적으로 p형과 n형의 반도체 소재를 이용해 인쇄방식으로 쉽게 제작 할 수 있다. 하지만 광활성층을 만들때 용매증발 과정에서 p형 고분자가 뭉치면서 불균일한 구조를 만들어 낸다.
 
-앞서 중국은 2018년 1월1일부터 플라스틱 쓰레기 수입 금지를 단행했다. 이전까지 중국은 전 세계 쓰레기의 절반가량을 도맡았다. 수입 금지 이후 갈 곳을 잃은 플라스틱 쓰레기가 동남아로 향했으며, 환경오염 등 각종 문제가 발생했다. 이에 말레이시아, 필리핀, 인도네시아, 베트남, 캄보디아 등이 쓰레기를 해당 국가에 되돌려 보내는 등 반입을 금지하는 추세다. 베트남은 2025년부터 폐플라스틱 수입을 전면 금지하겠다고 발표한 상태다.
+연구진은 p형과 n형 고분자에 또다른 n형 고분자를 첨가했다. p형과 n형 고분자는 물과 기름처럼 잘 섞이지 않는데, 또다른 n형 고분자가 들어가 그물처럼 각각의 소재를 균일하게 잡아주면서 뭉치는 현상들을 제어했다.
+
+연구진은 새로운 광활성층을 사용해 58.5㎠ 크기의 유기태양전지를 만들어 세계 최고 수준인 14.04%의 광전 변환효율을 달성했다. 기존 두 종류의 유기반도체 소재로 만든 태양전지의 광전 변환효율은 12.59%였다.
+
+또한 이 유기태양전지는 내구성도 향상됐다. 85도 온도에서 가속화테스트를 진행할 경우 1000시간 성능을 유지한다.
+
+이는 일반적인 환경에서 5년 정도 성능이 유지되는 것을 뜻한다.
+
+손해정 박사는 "추가적인 스케일업을 통해 실제 건물 외벽이나 자동차 등에 적용해 전기를 생산하는 단계까지 후속 연구개발을 진행해보고 싶다"고 말했다.
+
+한편, 연구진은 이번 연구결과를 에너지 분야의 국제학술지 '줄(Joule)'에 최근 발표했다.
+
 '''
 
 rtn = summarize_test(test_context)

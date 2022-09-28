@@ -9,7 +9,7 @@ def jaccard_from_string_set(s1, s2):
     return (len(set1 & set2) / len(set1 | set2))
 
 start = time.time()
-filename = 'esg2022-09-22-2022-09-23'
+filename = 'esg2022-09-28-2022-09-29'
 # filename= '한국타이어 사회공헌'
 threadhold = 0.2
 newslist = []
