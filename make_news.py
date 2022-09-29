@@ -1,3 +1,5 @@
+#-*- coding: utf-8 -*-
+
 from itertools import count
 from os.path import exists
 import requests
@@ -304,8 +306,8 @@ def select_news(cluster_list, threadhold = 0.12, NNP = False):
     return selected_cluster 
 
 
-search_keyword = '유기태양전지'
-date_period = 150
+search_keyword = '포스코 청정수소'
+date_period = 90
 select_threadhold = 0.12
 NNP_on = False
 
@@ -319,24 +321,31 @@ if (len(cluster_list) < 4):
 
 selected_clusters = select_news(cluster_list, select_threadhold, NNP_on)
 
-# question = [
-#     inquirer.Checkbox('material',
-#     "글감이 될 뉴스를 선택하세요",
-#     [cluster['cluster_title'] for cluster in selected_clusters])
-# ]
+question = [
+    inquirer.Checkbox('material',
+    "글감이 될 뉴스를 선택하세요",
+    [cluster['date']+' | '+ cluster['cluster_title'] for cluster in selected_clusters])
+]
 
-# materials = inquirer.prompt(question)['material']
+materials = inquirer.prompt(question)['material']
 
-# for material in materials:
-#     print(material)
-#     print(selected_clusters[find(selected_clusters, 'cluster_title', material)]['news_list'][0]['content'])
+for material in materials:
+    # print(material)
+    news = selected_clusters[find(selected_clusters, 'cluster_title', material[13:])]['news_list'][0]
+    rtn = summarize_test(news['content'])
+
+    print(news['dateline'][:10] + ' | ' + news['title'] + ' | ' + news['provider_link_page'])
+    for sent in rtn:
+        print(sent.text)
+    
+    print('\n\n')
     
 
-for cluster in selected_clusters:
-    date = cluster['news_list'][0]['dateline'][0:10]
-    title =  cluster['news_list'][0]['title']
-    link = cluster['news_list'][0]['provider_link_page']
-    print(f'{date} | {title} | {link}')
+# for cluster in selected_clusters:
+#     date = cluster['news_list'][0]['dateline'][0:10]
+#     title =  cluster['news_list'][0]['title']
+#     link = cluster['news_list'][0]['provider_link_page']
+#     print(f'{date} | {title} | {link}')
 
 
 

@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # import os
 # os.environ['KMP_DUPLICATE_LIB_OK']='True'
 
@@ -7,7 +8,7 @@ import numpy as np
 
 from kiwipiepy import Kiwi
 kiwi = Kiwi()
-import kss
+# import kss
 
 from tqdm.auto import tqdm
 
@@ -544,14 +545,14 @@ trained_model = Summarizer.load_from_checkpoint(
 
 def data_process(text):
     # 문장 분리 하고,
-    # sents = kiwi.split_into_sents(text)
-    sents = kss.split_sentences(text)
+    sents = kiwi.split_into_sents(text)
+    # sents = kss.split_sentences(text)
     
     #데이터 가공하고,
     tokenlist = []
     for sent in sents:
         tokenlist.append(tokenizer(
-            text = sent,
+            text = sent.text,
             add_special_tokens = True)) #, # Add '[CLS]' and '[SEP]'
 
     src = [] # 토크나이징 된 전체 문단
@@ -601,7 +602,6 @@ def summarize_test(text):
     
     # 예측 결과값을 받기 위한 프로세스
     rtn_sort, idx = rtn.sort(descending = True)
-    
     rtn_sort = rtn_sort.tolist()
     idx = idx.tolist()
 
@@ -616,41 +616,31 @@ def summarize_test(text):
         rslt = idx
         
     summ = []
-    print(' *** 입력한 문단의 요약문은 ...')
+    # print(' *** 입력한 문단의 요약문은 ...')
     for i, r in enumerate(rslt):
         summ.append(data['sents'][r])
-        print('[', i+1, ']', summ[i])
+        # print('[', i+1, ']', summ[i])
 
-    return summ
+    # return summ
+    return sorted(summ,key=lambda x:x.start)
 
-test_context = '''
-한국과학기술연구원(KIST) 차세대태양전지연구센터 손해정 박사팀이 유기태양전지를 넓은 면적으로 만들어도 성능이 유지되는 기술을 개발했다. 연구진은 빛을 받아 전기가 만들어지는 광활성층을 세 종류의 유기반도체 소재로 제작했다. 58.5㎠로 만든 대면적 유기태양전지 모듈은 세계 최고 수준인 14.04%의 광전 변환효율을 달성했다.
 
-손해정 박사는 27일 "인쇄 공정으로 만든 유기 태양전지를 대규모 모듈화 할 때 성능이 감소되는 주요요인을 밝혀 상용화에 한걸음 더 가까워졌다"고 말했다.
+def main():
+    test_context = '''
+    조주완(사진) LG전자(066570) 최고경영자(CEO) 사장이 취임 후 처음으로 협력사 간담회에 참석해 상생 협력을 위한 다양한 지원을 약속했다. \n \n\n LG전자는 최근 조 사장이 협력사 모임인 ‘협력회’ 임원들과 취임 후 첫 간담회를 가졌다고 8일 밝혔다. 간담회에는 LG전자에서 조 사장과 왕철민 구매·SCM경영센터장(전무) 등이, 협력회에서 임원단인 협력사 대표 8명이 각각 참석했다. \n \n\n 조 사장은 간담회에서 “자동화 시스템 구축, 공급망 다각화 등 제조 경쟁력을 확보하고 급변하는 시장 환경에 선제적으로 대응할 수 있도록 협력사에 실질적으로 도움이 되는 지원을 지속해서 펼쳐 상생 협력을 더욱 강화하겠다”고 약속했다. \n \n\n LG전자는 협력사 생산성 향상이 상생과 지속 가능한 성장을 위한 방안이라고 판단해 다양한 지원 활동을 펼치고 있다. 회사의 자동화 시스템 전문가를 협력사에 파견해 스마트공장 구축 노하우를 전수하고 있다. 또 로봇프로세스자동화(RPA) 기술을 도입할 수 있도록 도와 지난해 협력사 직원 중 80명 이상의 관련 전문가를 육성하고 176개 RPA를 업무에 도입하는 성과를 냈다.
+    '''
 
-유기태양전지는 건물 벽면이나 옥상의 외장재, 창문 등에 프린팅 하는 방법으로 제작이 가능해 도심형 태양광 발전의 핵심기술로 주목 받고 있다. 하지만 지금까지의 고효율 유기태양전지들은 실험실 수준에서 개발된 0.1㎠ 미만의 좁은 면적이다. 넓은 면적의 모듈을 제작할 때 발생하는 성능감소와 재현성 문제로 상용화에 어려움을 겪고 있다.
-
-연구진은 유기태양전지 내 광활성층의 형태에 주목했다. 광활성층은 일반적으로 p형과 n형의 반도체 소재를 이용해 인쇄방식으로 쉽게 제작 할 수 있다. 하지만 광활성층을 만들때 용매증발 과정에서 p형 고분자가 뭉치면서 불균일한 구조를 만들어 낸다.
-
-연구진은 p형과 n형 고분자에 또다른 n형 고분자를 첨가했다. p형과 n형 고분자는 물과 기름처럼 잘 섞이지 않는데, 또다른 n형 고분자가 들어가 그물처럼 각각의 소재를 균일하게 잡아주면서 뭉치는 현상들을 제어했다.
-
-연구진은 새로운 광활성층을 사용해 58.5㎠ 크기의 유기태양전지를 만들어 세계 최고 수준인 14.04%의 광전 변환효율을 달성했다. 기존 두 종류의 유기반도체 소재로 만든 태양전지의 광전 변환효율은 12.59%였다.
-
-또한 이 유기태양전지는 내구성도 향상됐다. 85도 온도에서 가속화테스트를 진행할 경우 1000시간 성능을 유지한다.
-
-이는 일반적인 환경에서 5년 정도 성능이 유지되는 것을 뜻한다.
-
-손해정 박사는 "추가적인 스케일업을 통해 실제 건물 외벽이나 자동차 등에 적용해 전기를 생산하는 단계까지 후속 연구개발을 진행해보고 싶다"고 말했다.
-
-한편, 연구진은 이번 연구결과를 에너지 분야의 국제학술지 '줄(Joule)'에 최근 발표했다.
-
-'''
-
-rtn = summarize_test(test_context)
+    # a = kiwi.split_into_sents(test_context)
+    # print(a)
+    rtn = summarize_test(test_context)
+    for sent in rtn:
+        print(sent.text)
+    exit()
 
 
 
-
+if __name__ == "__main__":
+    main()
 
 
 
