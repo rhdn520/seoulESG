@@ -633,8 +633,7 @@ def main():
     # a = kiwi.split_into_sents(test_context)
     # print(a)
     rtn = summarize_test(test_context)
-    for sent in rtn:
-        print(sent.text)
+    print(rtn)
     exit()
 
 

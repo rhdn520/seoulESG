@@ -100,7 +100,7 @@ def search_news(searchWord, period=90):
             "OBS"
         ],
         "category": [
-            "경제"
+            # "경제"
         ],
         "sort": {"date": "asc"},
         "return_size": 10000,
@@ -140,7 +140,6 @@ def jaccard_from_list(list1, list2):
     set2 = set(list2)
     return (len(set1 & set2) / len(set1 | set2))
 
-
 def filter_news(keyword, newsList):
     filtered_news_list = []
     keyword_tokens = kiwi.tokenize(clean_text(keyword))
@@ -159,7 +158,7 @@ def filter_news(keyword, newsList):
         #calculate jaccard coefficient with title & keyword
         title_jaccard = jaccard_from_list(keyword_token_list, news['token_list'])
 
-        if((token_occurrence * 2) + (title_jaccard * 3) > 0.05):
+        if((token_occurrence * 2) + (title_jaccard * 3) > 0):
             filtered_news_list.append(news)
     
     return filtered_news_list
@@ -195,7 +194,7 @@ def cluster_news(news_list):
         clusters.append(cluster)
         ignoreIdx = ignoreIdx + cluster
         count = count + 1
-    
+
     i = 0
     while i < len(clusters):
         j = i + 1
@@ -260,7 +259,7 @@ def select_news(cluster_list, threadhold = 0.12, NNP = False):
         inquirer.List(
             'standard',
             message = "기준이 될 클러스터를 고르세요",
-            choices= [cluster['cluster_title'] for cluster in cluster_list[-10:]]
+            choices= [cluster['cluster_title'] for cluster in cluster_list[-20:]]
         )
     ]
     answer = inquirer.prompt(question)
@@ -292,8 +291,8 @@ def select_news(cluster_list, threadhold = 0.12, NNP = False):
 
         if(jaccard_from_list(standard_tokens, cluster_tokens) > threadhold):
             index_obj = {
-                'index': index,
-                'jaccard': jaccard_from_list(standard_tokens, cluster_tokens)
+                'index': index, #숫자
+                'jaccard': jaccard_from_list(standard_tokens, cluster_tokens) #숫자
             }
             insight_indices.append(index_obj)
 
@@ -304,17 +303,17 @@ def select_news(cluster_list, threadhold = 0.12, NNP = False):
         selected_cluster.append(cluster_list[index['index']])
 
     return selected_cluster 
+ 
 
-
-search_keyword = '포스코 청정수소'
+search_keyword = '정부 IRA 협력'
 date_period = 90
 select_threadhold = 0.12
-NNP_on = False
+NNP_on = True
 
-request_result = search_news(search_keyword, 120)
+request_result = search_news(search_keyword, date_period)
 print(len(request_result))
-filtered_result = filter_news(search_keyword, request_result)
-cluster_list = cluster_news(filtered_result)
+# filtered_result = filter_news(search_keyword, request_result)
+cluster_list = cluster_news(request_result)
 if (len(cluster_list) < 4):
     print('뉴스의 개수가 너무 적습니다')
     exit()
@@ -339,13 +338,5 @@ for material in materials:
         print(sent.text)
     
     print('\n\n')
-    
-
-# for cluster in selected_clusters:
-#     date = cluster['news_list'][0]['dateline'][0:10]
-#     title =  cluster['news_list'][0]['title']
-#     link = cluster['news_list'][0]['provider_link_page']
-#     print(f'{date} | {title} | {link}')
-
 
 
