@@ -305,15 +305,24 @@ def select_news(cluster_list, threadhold = 0.12, NNP = False):
     return selected_cluster 
  
 
-search_keyword = '정부 IRA 협력'
-date_period = 90
+search_keyword = '폐기물 매립 제로'
+date_period = 120
 select_threadhold = 0.12
-NNP_on = True
+
+search_keyword_tokens = kiwi.tokenize(search_keyword)
+NNP_on = False
+for token in search_keyword_tokens:
+    if(token.form == 'NNP'):
+        NNP_on = True
+
+print(search_keyword_tokens)
+print(NNP_on)
+# NNP_on = True
 
 request_result = search_news(search_keyword, date_period)
 print(len(request_result))
-# filtered_result = filter_news(search_keyword, request_result)
-cluster_list = cluster_news(request_result)
+filtered_result = filter_news(search_keyword, request_result)
+cluster_list = cluster_news(filtered_result)
 if (len(cluster_list) < 4):
     print('뉴스의 개수가 너무 적습니다')
     exit()
