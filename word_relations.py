@@ -25,9 +25,9 @@ def update_keyword_relations(tokens_count):
                 if token == tokenn: 
                     continue
                 elif(tokenn in data[token]): #tokens count 정보가 이미 있는 경우
-                    data[token][tokenn] = data[token][tokenn] + tokens_count[tokenn]
+                    data[token][tokenn] = data[token][tokenn] + 1
                 else: #tokens count 정보가 없는 경우 새로운 tokens count 를 넣어줌
-                    data[token][tokenn] = tokens_count[tokenn]
+                    data[token][tokenn] = 1
         else:
             # 새로운 단어에 대한 정보 추가
             data[token] = {}
@@ -36,7 +36,7 @@ def update_keyword_relations(tokens_count):
                     continue
                 else:
                     # print(tokens_count[tokenn])
-                    data[token][tokenn] = tokens_count[tokenn]
+                    data[token][tokenn] = 1
             # jsonfile[token] = tokens_count[token]
     
     with open(f'dictionary/keyword_relations.json','w', encoding='UTF-8') as jsonfile:
